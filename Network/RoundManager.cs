@@ -142,16 +142,12 @@ namespace FishNet.Component.Spawning
         private void Update()
         {
             _timeRemaining.Update(Time.deltaTime);
-
-
             int totalSeconds = Mathf.CeilToInt(_timeRemaining.Remaining); // 남은 시간을 올림하여 정수 초 단위로 변환
             int minutes = totalSeconds / 60; // 분 단위
             int seconds = totalSeconds % 60; // 초 단위
-
             // 텍스트 업데이트
             timerText[0].text = minutes.ToString("0"); // 분을 표시하는 텍스트
             timerText[1].text = seconds.ToString("00"); // 초를 표시하는 텍스트
-
             if (_timeRemaining.Remaining <= 0 || (TKillCount == 50 || CTKillCount == 50))
             {
                 if (TKillCount > CTKillCount)
@@ -320,15 +316,16 @@ namespace FishNet.Component.Spawning
         [ServerRpc(RequireOwnership = false)]
         public void UpdateLeaderboard()
         {
+            Debug.Log("UpdateLeaderboard called");
             foreach (var player in playerNetworks)
             {
                 Player playerComponent = player.GetComponent<Player>();
                 if (playerComponent != null)
                 {
+                    Debug.Log($"Updating leaderboard for {player.nickname}: Kills {playerComponent.myKill.Value}, Deaths {playerComponent.myDeath.Value}");
                     leaderboardData[player.nickname] = new PlayerStats(playerComponent.myKill.Value, playerComponent.myDeath.Value);
                 }
             }
-
             DebugLeaderboardData();
         }
         [ObserversRpc]
